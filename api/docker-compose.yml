@@ -1,0 +1,38 @@
+version: "3.3"
+
+services:
+  app:
+    image: "node:12.16.3"
+    container_name: api-mias
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "node"
+    working_dir: /usr/src/app
+    environment:
+      - NODE_ENV=production
+      - VERSION=1.0
+    volumes:
+      - .:/usr/src/app
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    tty: true
+    command: "npm start"
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres-data:/var/lib/postgres/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=db_pyms
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=p4ssw0rd
+volumes:
+  postgres-data:
+    external: false
